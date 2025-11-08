@@ -1,0 +1,90 @@
+## === Build artifacts ===
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+artifacts/
+
+## === User-specific files ===
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+*.userprefs
+
+## === Visual Studio ===
+.vs/
+.vscode/
+.idea/
+*.sln.iml
+
+## === .NET / EF Core ===
+project.lock.json
+project.fragment.lock.json
+*.db
+*.mdf
+*.ldf
+*.ndf
+
+# Ignore migrations (recreated locally)
+Migrations/
+
+## === Docker ===
+docker-compose.override.yml
+*.env
+
+## === Configuration secrets ===
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+secrets.json
+
+## === Logs ===
+*.log
+*.tlog
+TestResults/
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+## === Node / Angular ===
+node_modules/
+dist/
+wwwroot/lib/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+## === OS files ===
+.DS_Store
+Thumbs.db
+
+## === Backup / Temp files ===
+*.bak
+*.old
+*.tmp
+~$*
+
+## === Packages ===
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+## === Tools and IDE caches ===
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+## === Publish ===
+*.Publish.xml
+*.pubxml
+*.publishproj
+
+## === Coverage ===
+*.coverage
+*.coveragexml
+coverage/
+
+## === Miscellaneous ===
+ScaffoldingReadMe.txt
+.env
