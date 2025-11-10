@@ -1,0 +1,30 @@
+h1 {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.status {
+  margin-left: 8px;
+  font-size: 12px;
+  color: #555;
+}
+
+.error {
+  color: #b00020;
+  margin-bottom: 8px;
+}

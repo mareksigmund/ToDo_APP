@@ -1,0 +1,22 @@
+<h2>Dodaj zadanie</h2>
+
+@if (error) {
+<div class="error">{{ error }}</div>
+}
+
+<form (ngSubmit)="onSubmit()" novalidate>
+  <div>
+    <label>
+      Tytuł:
+      <input type="text" [(ngModel)]="formData.title" name="title" required />
+    </label>
+  </div>
+
+  <div>
+    <label>
+      Opis:
+      <textarea [(ngModel)]="formData.description" name="description" rows="3"></textarea>
+    </label>
+  </div>
+  <button type="submit" [disabled]="isSubmitting">Dodaj</button>
+</form>

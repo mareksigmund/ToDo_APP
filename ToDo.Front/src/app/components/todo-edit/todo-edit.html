@@ -1,0 +1,26 @@
+<h2>Edytuj zadanie</h2>
+
+@if (isLoading) {
+<div>Ładowanie danych...</div>
+} @if (error) {
+<div class="error">{{ error }}</div>
+} @if (!isLoading && !error) {
+<form (ngSubmit)="onSubmit()" novalidate>
+  <div>
+    <label>
+      Tytuł:
+      <input type="text" [(ngModel)]="formData.title" name="title" required />
+    </label>
+  </div>
+
+  <div>
+    <label>
+      Opis:
+      <textarea [(ngModel)]="formData.description" name="description" rows="3"></textarea>
+    </label>
+  </div>
+
+  <button type="submit" [disabled]="isSaving">Zapisz</button>
+  <button type="button" (click)="onCancel()">Anuluj</button>
+</form>
+}

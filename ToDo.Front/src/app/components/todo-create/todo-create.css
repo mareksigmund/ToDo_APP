@@ -1,0 +1,13 @@
+h2 {
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+
+.error {
+  color: #b00020;
+  margin-bottom: 8px;
+}
+
+form div {
+  margin-bottom: 8px;
+}

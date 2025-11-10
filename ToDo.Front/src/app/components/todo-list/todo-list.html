@@ -1,0 +1,30 @@
+<app-todo-create (created)="onTodoCreated($event)"></app-todo-create>
+<h1>ToDo List</h1>
+
+@if (isLoading) {
+<div>Ładowanie zadań...</div>
+} @if (error) {
+<div class="error">
+  {{ error }}
+</div>
+} @if (!isLoading && !error && todos.length > 0) {
+<ul>
+  @for (todo of todos; track todo.id) {
+  <li>
+    <strong [class.completed]="todo.isCompleted">
+      {{ todo.title }}
+    </strong>
+
+    @if (todo.description) {
+    <span> - {{ todo.description }}</span>
+    }
+
+    <span class="status"> [{{ todo.isCompleted ? 'zrobione' : 'do zrobienia' }}] </span>
+    <a [routerLink]="['/todos', todo.id, 'edit']">Edytuj</a>
+    <button type="button" (click)="onDelete(todo.id)">Usuń</button>
+  </li>
+  }
+</ul>
+} @if (!isLoading && !error && todos.length === 0) {
+<div>Brak zadań. Dodaj coś na start</div>
+}
