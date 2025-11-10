@@ -1,13 +1,37 @@
 h2 {
-  margin-top: 24px;
-  margin-bottom: 8px;
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
 }
 
 .error {
   color: #b00020;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
 }
 
-form div {
-  margin-bottom: 8px;
+.form-field {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+button[mat-flat-button] {
+  font-weight: 500;
+  border-radius: 8px;
+  padding-inline: 20px;
+}
+
+button[mat-flat-button][disabled] {
+  opacity: 0.6;
 }

@@ -1,26 +1,45 @@
 <h2>Edytuj zadanie</h2>
 
 @if (isLoading) {
-<div>Ładowanie danych...</div>
+<div class="loading">
+  <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+</div>
 } @if (error) {
-<div class="error">{{ error }}</div>
+<div class="error">
+  {{ error }}
+</div>
 } @if (!isLoading && !error) {
 <form (ngSubmit)="onSubmit()" novalidate>
-  <div>
-    <label>
-      Tytuł:
-      <input type="text" [(ngModel)]="formData.title" name="title" required />
-    </label>
-  </div>
+  <mat-form-field appearance="outline" class="form-field full-width">
+    <mat-label>Tytuł</mat-label>
+    <input
+      matInput
+      type="text"
+      [(ngModel)]="formData.title"
+      name="title"
+      required
+      placeholder="Wprowadź tytuł zadania"
+    />
+  </mat-form-field>
 
-  <div>
-    <label>
-      Opis:
-      <textarea [(ngModel)]="formData.description" name="description" rows="3"></textarea>
-    </label>
-  </div>
+  <mat-form-field appearance="outline" class="form-field full-width">
+    <mat-label>Opis</mat-label>
+    <textarea
+      matInput
+      [(ngModel)]="formData.description"
+      name="description"
+      rows="3"
+      placeholder="Opcjonalny opis zadania"
+    ></textarea>
+  </mat-form-field>
 
-  <button type="submit" [disabled]="isSaving">Zapisz</button>
-  <button type="button" (click)="onCancel()">Anuluj</button>
+  <div class="actions">
+    <button mat-flat-button color="primary" type="submit" [disabled]="isSaving">
+      <mat-icon>save</mat-icon>
+      Zapisz
+    </button>
+
+    <button mat-stroked-button type="button" (click)="onCancel()">Anuluj</button>
+  </div>
 </form>
 }

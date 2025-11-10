@@ -1,30 +1,101 @@
-<app-todo-create (created)="onTodoCreated($event)"></app-todo-create>
-<h1>ToDo List</h1>
+<mat-toolbar color="primary" class="toolbar">
+  <span class="logo">TaskBoard</span>
+  <span class="spacer"></span>
 
-@if (isLoading) {
-<div>Ładowanie zadań...</div>
-} @if (error) {
-<div class="error">
-  {{ error }}
-</div>
-} @if (!isLoading && !error && todos.length > 0) {
-<ul>
-  @for (todo of todos; track todo.id) {
-  <li>
-    <strong [class.completed]="todo.isCompleted">
-      {{ todo.title }}
-    </strong>
+  <button mat-stroked-button (click)="loadTodos()">
+    <mat-icon>refresh</mat-icon>
+    Odśwież
+  </button>
 
-    @if (todo.description) {
-    <span> - {{ todo.description }}</span>
-    }
+  <button mat-stroked-button (click)="isShowingCreateTodo = !isShowingCreateTodo">
+    <mat-icon>{{ isShowingCreateTodo ? 'remove' : 'add' }}</mat-icon>
+    {{ isShowingCreateTodo ? 'Ukryj' : 'Dodaj' }}
+  </button>
+</mat-toolbar>
 
-    <span class="status"> [{{ todo.isCompleted ? 'zrobione' : 'do zrobienia' }}] </span>
-    <a [routerLink]="['/todos', todo.id, 'edit']">Edytuj</a>
-    <button type="button" (click)="onDelete(todo.id)">Usuń</button>
-  </li>
+<div class="page-wrapper">
+  @if (isShowingCreateTodo) {
+  <mat-card class="create-card">
+    <div class="create-header">
+      <h2>Dodaj nowe zadanie</h2>
+      <button
+        mat-icon-button
+        type="button"
+        (click)="isShowingCreateTodo = false"
+        aria-label="Zamknij"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <app-todo-create (created)="onTodoCreated($event)"></app-todo-create>
+  </mat-card>
   }
-</ul>
-} @if (!isLoading && !error && todos.length === 0) {
-<div>Brak zadań. Dodaj coś na start</div>
-}
+
+  <div class="header-row">
+    <h1>ToDo List</h1>
+  </div>
+
+  @if (isLoading) {
+  <div class="center">
+    <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+  </div>
+  } @if (error) {
+  <mat-card class="error-card">
+    {{ error }}
+  </mat-card>
+  } @if (!isLoading && !error && todos.length > 0) {
+  <div
+    class="todo-list"
+    cdkDropList
+    [cdkDropListData]="todos"
+    (cdkDropListDropped)="onDrop($event)"
+  >
+    @for (todo of todos; track todo.id) {
+    <mat-card class="todo-card" cdkDrag [cdkDragData]="todo">
+      <div class="todo-left">
+        <div class="drag-handle" cdkDragHandle>
+          <mat-icon>drag_indicator</mat-icon>
+        </div>
+
+        <mat-checkbox [checked]="todo.isCompleted" (change)="onToggleStatus(todo)"> </mat-checkbox>
+
+        <div class="todo-texts">
+          <div class="todo-title" [class.completed]="todo.isCompleted">
+            {{ todo.title }}
+          </div>
+
+          @if (todo.description) {
+          <div class="todo-desc">
+            {{ todo.description }}
+          </div>
+          }
+
+          <div class="todo-status" [class.completed]="todo.isCompleted">
+            {{ todo.isCompleted ? 'Zrobione' : 'Do zrobienia' }}
+          </div>
+        </div>
+      </div>
+
+      <div class="todo-actions">
+        <button mat-icon-button [routerLink]="['/todos', todo.id, 'edit']" aria-label="Edytuj">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <button
+          mat-icon-button
+          color="warn"
+          type="button"
+          (click)="onDelete(todo.id)"
+          aria-label="Usuń"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </mat-card>
+    }
+  </div>
+  } @if (!isLoading && !error && todos.length === 0) {
+  <div class="empty">Brak zadań. Użyj przycisku „Dodaj”, aby utworzyć pierwsze.</div>
+  }
+</div>

@@ -4,11 +4,29 @@ import { RouterModule } from '@angular/router';
 import { TodoCreate } from '../todo-create/todo-create';
 import { Todo } from '../../models/todo.model';
 import { TodoService } from '../../services/todo-service';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { CdkDragDrop, DragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-todo-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, TodoCreate],
+  imports: [
+    CommonModule,
+    RouterModule,
+    TodoCreate,
+    DragDropModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatProgressSpinnerModule,
+  ],
   templateUrl: './todo-list.html',
   styleUrls: ['./todo-list.css'],
 })
@@ -18,6 +36,7 @@ export class TodoList implements OnInit {
   todos: Todo[] = [];
   isLoading = false;
   error: string | null = null;
+  isShowingCreateTodo = false;
 
   constructor(private readonly todoService: TodoService) {}
 
@@ -46,6 +65,7 @@ export class TodoList implements OnInit {
 
   onTodoCreated(todo: Todo): void {
     this.todos = [...this.todos, todo];
+    this.isShowingCreateTodo = false;
     if (this.error) {
       this.error = null;
     }
@@ -67,5 +87,35 @@ export class TodoList implements OnInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  onToggleStatus(todo: Todo): void {
+    this.todoService.toggleTodo(todo.id).subscribe({
+      next: () => {
+        this.todos = this.todos.map((t) =>
+          t.id === todo.id ? { ...t, isCompleted: !t.isCompleted } : t
+        );
+        this.todos = [...this.todos].sort((a, b) => {
+          return Number(a.isCompleted) - Number(b.isCompleted);
+        });
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.error = 'Nie udało się zmienić statusu zadania.';
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  onDrop(event: CdkDragDrop<Todo[]>): void {
+    if (event.previousIndex === event.currentIndex) {
+      return;
+    }
+
+    const updated = [...this.todos];
+    moveItemInArray(updated, event.previousIndex, event.currentIndex);
+    this.todos = updated;
+
+    this.cdr.markForCheck();
   }
 }
