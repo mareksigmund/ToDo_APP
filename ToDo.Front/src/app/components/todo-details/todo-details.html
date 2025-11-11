@@ -1,0 +1,61 @@
+<div class="details-container">
+  @if (isLoading) {
+  <div class="center">
+    <mat-progress-spinner mode="indeterminate" diameter="40"> </mat-progress-spinner>
+  </div>
+  } @else if (error) {
+  <div class="error">
+    {{ error }}
+  </div>
+  } @else if (todo) {
+  <mat-card class="todo-details-card">
+    <div class="details-header">
+      <div class="todo-details-avatar">
+        <mat-icon>task_alt</mat-icon>
+      </div>
+
+      <div class="details-title-block">
+        <h1 class="details-title">
+          {{ todo.title }}
+        </h1>
+        <p class="details-subtitle">
+          Utworzono:
+          <span>{{ todo.createdAt | date : 'short' }}</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="details-content">
+      @if (todo.description && todo.description.trim().length > 0) {
+      <p class="todo-details-description">
+        {{ todo.description }}
+      </p>
+      } @else {
+      <p class="todo-details-description todo-details-description--muted">
+        Brak opisu dla tego zadania.
+      </p>
+      }
+
+      <mat-chip
+        class="status-chip"
+        [ngClass]="{ completed: todo.isCompleted, pending: !todo.isCompleted }"
+        selected
+      >
+        {{ todo.isCompleted ? 'Zrobione' : 'Do zrobienia' }}
+      </mat-chip>
+    </div>
+
+    <div class="details-actions">
+      <button mat-stroked-button color="primary" (click)="goEdit()">
+        <mat-icon>edit</mat-icon>
+        Edytuj
+      </button>
+
+      <button mat-stroked-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Powrót
+      </button>
+    </div>
+  </mat-card>
+  }
+</div>

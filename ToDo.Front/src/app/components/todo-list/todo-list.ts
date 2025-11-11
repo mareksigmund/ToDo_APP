@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TodoCreate } from '../todo-create/todo-create';
 import { Todo } from '../../models/todo.model';
 import { TodoService } from '../../services/todo-service';
@@ -38,7 +38,7 @@ export class TodoList implements OnInit {
   error: string | null = null;
   isShowingCreateTodo = false;
 
-  constructor(private readonly todoService: TodoService) {}
+  constructor(private readonly todoService: TodoService, private readonly router: Router) {}
 
   ngOnInit(): void {
     this.loadTodos();
@@ -51,7 +51,7 @@ export class TodoList implements OnInit {
 
     this.todoService.getTodos().subscribe({
       next: (data) => {
-        this.todos = data;
+        this.todos = this.sortTodos(data);
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -63,13 +63,38 @@ export class TodoList implements OnInit {
     });
   }
 
+  private sortTodos(todos: Todo[]): Todo[] {
+    return [...todos].sort((a, b) => {
+      if (a.isCompleted !== b.isCompleted) {
+        return Number(a.isCompleted) - Number(b.isCompleted);
+      }
+      const aDate = new Date(a.createdAt).getTime();
+      const bDate = new Date(b.createdAt).getTime();
+      return bDate - aDate;
+    });
+  }
+
   onTodoCreated(todo: Todo): void {
-    this.todos = [...this.todos, todo];
+    this.todos = this.sortTodos([todo, ...this.todos]);
     this.isShowingCreateTodo = false;
-    if (this.error) {
-      this.error = null;
-    }
+    this.error = null;
     this.cdr.markForCheck();
+  }
+
+  onToggleStatus(todo: Todo): void {
+    this.todoService.toggleTodo(todo.id).subscribe({
+      next: () => {
+        const updated = this.todos.map((t) =>
+          t.id === todo.id ? { ...t, isCompleted: !t.isCompleted } : t
+        );
+        this.todos = this.sortTodos(updated);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.error = 'Nie udało się zmienić statusu zadania.';
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   onDelete(id: string): void {
@@ -89,33 +114,17 @@ export class TodoList implements OnInit {
     });
   }
 
-  onToggleStatus(todo: Todo): void {
-    this.todoService.toggleTodo(todo.id).subscribe({
-      next: () => {
-        this.todos = this.todos.map((t) =>
-          t.id === todo.id ? { ...t, isCompleted: !t.isCompleted } : t
-        );
-        this.todos = [...this.todos].sort((a, b) => {
-          return Number(a.isCompleted) - Number(b.isCompleted);
-        });
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.error = 'Nie udało się zmienić statusu zadania.';
-        this.cdr.markForCheck();
-      },
-    });
-  }
-
   onDrop(event: CdkDragDrop<Todo[]>): void {
     if (event.previousIndex === event.currentIndex) {
       return;
     }
-
     const updated = [...this.todos];
     moveItemInArray(updated, event.previousIndex, event.currentIndex);
     this.todos = updated;
-
     this.cdr.markForCheck();
+  }
+
+  goToDetails(id: string): void {
+    this.router.navigate(['/todos', id, 'details']);
   }
 }

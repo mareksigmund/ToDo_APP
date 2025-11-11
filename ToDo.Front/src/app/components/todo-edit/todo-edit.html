@@ -1,45 +1,52 @@
-<h2>Edytuj zadanie</h2>
+<div class="edit-container">
+  <div class="edit-card">
+    <div class="edit-header">
+      <h1>EDYTUJ ZADANIE</h1>
+      <p>Wprowadź zmiany i zapisz, aby zaktualizować wybrane zadanie.</p>
+    </div>
 
-@if (isLoading) {
-<div class="loading">
-  <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
-</div>
-} @if (error) {
-<div class="error">
-  {{ error }}
-</div>
-} @if (!isLoading && !error) {
-<form (ngSubmit)="onSubmit()" novalidate>
-  <mat-form-field appearance="outline" class="form-field full-width">
-    <mat-label>Tytuł</mat-label>
-    <input
-      matInput
-      type="text"
-      [(ngModel)]="formData.title"
-      name="title"
-      required
-      placeholder="Wprowadź tytuł zadania"
-    />
-  </mat-form-field>
+    @if (isLoading) {
+    <div class="loading">
+      <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+    </div>
+    } @if (error) {
+    <div class="error-banner">{{ error }}</div>
+    } @if (!isLoading && !error) {
+    <form class="edit-form" (ngSubmit)="onSubmit()" novalidate>
+      <mat-form-field appearance="outline" class="form-field full-width">
+        <mat-label>Tytuł*</mat-label>
+        <input
+          matInput
+          type="text"
+          [(ngModel)]="formData.title"
+          name="title"
+          required
+          placeholder="np. Przygotować prezentację na piątek"
+        />
+      </mat-form-field>
 
-  <mat-form-field appearance="outline" class="form-field full-width">
-    <mat-label>Opis</mat-label>
-    <textarea
-      matInput
-      [(ngModel)]="formData.description"
-      name="description"
-      rows="3"
-      placeholder="Opcjonalny opis zadania"
-    ></textarea>
-  </mat-form-field>
+      <mat-form-field appearance="outline" class="form-field full-width">
+        <mat-label>Opis</mat-label>
+        <textarea
+          matInput
+          [(ngModel)]="formData.description"
+          name="description"
+          rows="4"
+          placeholder="np. Uzupełnić szczegóły, terminy, listę zadań cząstkowych"
+        ></textarea>
+      </mat-form-field>
 
-  <div class="actions">
-    <button mat-flat-button color="primary" type="submit" [disabled]="isSaving">
-      <mat-icon>save</mat-icon>
-      Zapisz
-    </button>
+      <div class="actions">
+        <button mat-flat-button type="submit" class="primary-btn" [disabled]="isSaving">
+          <mat-icon>save</mat-icon>
+          Zapisz
+        </button>
 
-    <button mat-stroked-button type="button" (click)="onCancel()">Anuluj</button>
+        <button mat-stroked-button type="button" class="ghost-btn" (click)="onCancel()">
+          Anuluj
+        </button>
+      </div>
+    </form>
+    }
   </div>
-</form>
-}
+</div>

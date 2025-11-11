@@ -1,23 +1,31 @@
-<mat-toolbar color="primary" class="toolbar">
-  <span class="logo">TaskBoard</span>
+<mat-toolbar class="toolbar">
+  <span class="logo">TASKBOARD</span>
+
   <span class="spacer"></span>
 
-  <button mat-stroked-button (click)="loadTodos()">
-    <mat-icon>refresh</mat-icon>
-    Odśwież
-  </button>
+  <div class="toolbar-actions">
+    <button mat-stroked-button class="toolbar-btn" type="button" (click)="loadTodos()">
+      <mat-icon>refresh</mat-icon>
+      Odśwież
+    </button>
 
-  <button mat-stroked-button (click)="isShowingCreateTodo = !isShowingCreateTodo">
-    <mat-icon>{{ isShowingCreateTodo ? 'remove' : 'add' }}</mat-icon>
-    {{ isShowingCreateTodo ? 'Ukryj' : 'Dodaj' }}
-  </button>
+    <button
+      mat-flat-button
+      color="primary"
+      class="toolbar-btn toolbar-btn-primary"
+      type="button"
+      (click)="isShowingCreateTodo = !isShowingCreateTodo"
+    >
+      <mat-icon>{{ isShowingCreateTodo ? 'remove' : 'add' }}</mat-icon>
+      {{ isShowingCreateTodo ? 'Ukryj' : 'Dodaj' }}
+    </button>
+  </div>
 </mat-toolbar>
 
 <div class="page-wrapper">
   @if (isShowingCreateTodo) {
   <mat-card class="create-card">
     <div class="create-header">
-      <h2>Dodaj nowe zadanie</h2>
       <button
         mat-icon-button
         type="button"
@@ -33,7 +41,24 @@
   }
 
   <div class="header-row">
-    <h1>ToDo List</h1>
+    <mat-card class="page-title-card">
+      <div class="page-title-content">
+        <div class="page-title-left">
+          <mat-icon class="page-title-icon">checklist</mat-icon>
+
+          <div class="page-title-texts">
+            <h1>ToDo List</h1>
+            <p>Twoje zadania w jednym, uporządkowanym miejscu</p>
+          </div>
+        </div>
+
+        <div class="page-title-right">
+          <span class="tasks-count">
+            {{ todos.length }} {{ todos.length === 1 ? 'zadanie' : 'zadań' }}
+          </span>
+        </div>
+      </div>
+    </mat-card>
   </div>
 
   @if (isLoading) {
@@ -53,44 +78,62 @@
   >
     @for (todo of todos; track todo.id) {
     <mat-card class="todo-card" cdkDrag [cdkDragData]="todo">
-      <div class="todo-left">
-        <div class="drag-handle" cdkDragHandle>
-          <mat-icon>drag_indicator</mat-icon>
+      <div class="todo-main">
+        <div class="todo-left">
+          <div class="drag-handle" cdkDragHandle>
+            <mat-icon>drag_indicator</mat-icon>
+          </div>
+
+          <mat-checkbox
+            class="todo-checkbox"
+            [checked]="todo.isCompleted"
+            (change)="onToggleStatus(todo)"
+          >
+          </mat-checkbox>
+
+          <div class="todo-texts">
+            <div class="todo-title" [class.completed]="todo.isCompleted">
+              {{ todo.title }}
+            </div>
+
+            @if (todo.description) {
+            <div class="todo-desc">
+              {{ todo.description }}
+            </div>
+            }
+          </div>
         </div>
 
-        <mat-checkbox [checked]="todo.isCompleted" (change)="onToggleStatus(todo)"> </mat-checkbox>
-
-        <div class="todo-texts">
-          <div class="todo-title" [class.completed]="todo.isCompleted">
-            {{ todo.title }}
-          </div>
-
-          @if (todo.description) {
-          <div class="todo-desc">
-            {{ todo.description }}
-          </div>
-          }
-
-          <div class="todo-status" [class.completed]="todo.isCompleted">
+        <div class="todo-right">
+          <span class="todo-status-pill" [class.completed]="todo.isCompleted">
             {{ todo.isCompleted ? 'Zrobione' : 'Do zrobienia' }}
+          </span>
+
+          <div class="todo-actions">
+            <button
+              mat-icon-button
+              type="button"
+              aria-label="Szczegóły"
+              (click)="goToDetails(todo.id)"
+            >
+              <mat-icon>info</mat-icon>
+            </button>
+
+            <button mat-icon-button [routerLink]="['/todos', todo.id, 'edit']" aria-label="Edytuj">
+              <mat-icon>edit</mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              color="warn"
+              type="button"
+              (click)="onDelete(todo.id)"
+              aria-label="Usuń"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
           </div>
         </div>
-      </div>
-
-      <div class="todo-actions">
-        <button mat-icon-button [routerLink]="['/todos', todo.id, 'edit']" aria-label="Edytuj">
-          <mat-icon>edit</mat-icon>
-        </button>
-
-        <button
-          mat-icon-button
-          color="warn"
-          type="button"
-          (click)="onDelete(todo.id)"
-          aria-label="Usuń"
-        >
-          <mat-icon>delete</mat-icon>
-        </button>
       </div>
     </mat-card>
     }
