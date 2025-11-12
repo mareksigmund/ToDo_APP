@@ -5,11 +5,13 @@ Repozytorium zawiera dwa główne projekty:
 - **ToDo.Api** – backend (ASP.NET Core 8 Web API + PostgreSQL, EF Core, testy xUnit)
 - **ToDo.Front** – frontend (aplikacja kliencka komunikująca się z API)
 
+```text
 .
 ├── ToDo.Api/ # Backend (.NET 8 + PostgreSQL + EF Core)
 | ├── ToDo.Api.Tests/ # Testy jednostkowe backendu (xUnit)
-├── ToDo.Front/ # Frontend (Angular 20)
+├── ToDo.Front/ # Frontend (Angular 20, standalone components, zoneless change detection)
 └── docker-compose.yml
+```
 
 ---
 
