@@ -44,6 +44,12 @@ export class TodoCreate {
       this.error = 'Tytuł jest wymagany.';
       return;
     }
+    const descriptionTrimmed = this.formData.description?.trim() || '';
+
+    if (descriptionTrimmed.length > 1000) {
+      this.error = 'Opis nie może przekraczać 1000 znaków.';
+      return;
+    }
 
     const payload: CreateTodo = {
       title: titleTrimmed,

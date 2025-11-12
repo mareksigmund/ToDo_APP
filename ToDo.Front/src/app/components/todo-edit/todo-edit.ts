@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TodoService } from '../../services/todo-service';
@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-todo-edit',
@@ -26,8 +27,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   templateUrl: './todo-edit.html',
   styleUrls: ['./todo-edit.css'],
 })
-export class TodoEdit implements OnInit {
+export class TodoEdit implements OnInit, OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
+  private routeSub?: Subscription;
 
   todoId = '';
   formData: EditTodo = { title: '', description: '' };
@@ -66,8 +68,8 @@ export class TodoEdit implements OnInit {
     this.todoService.getTodoById(this.todoId).subscribe({
       next: (todo: Todo) => {
         this.formData = {
-          title: todo.title,
-          description: todo.description ?? '',
+          title: (todo.title ?? '').trim(),
+          description: (todo.description ?? '').trim(),
         };
         this.isLoading = false;
         this.cdr.markForCheck();
@@ -86,6 +88,12 @@ export class TodoEdit implements OnInit {
     const titleTrimmed = this.formData.title.trim();
     if (!titleTrimmed) {
       this.error = 'Tytuł jest wymagany.';
+      this.cdr.markForCheck();
+      return;
+    }
+    const descriptionTrimmed = this.formData.description?.trim() || '';
+    if (descriptionTrimmed.length > 1000) {
+      this.error = 'Opis nie może przekraczać 1000 znaków.';
       this.cdr.markForCheck();
       return;
     }
@@ -115,5 +123,9 @@ export class TodoEdit implements OnInit {
 
   onCancel(): void {
     this.router.navigateByUrl('/');
+  }
+
+  ngOnDestroy(): void {
+    this.routeSub?.unsubscribe();
   }
 }

@@ -11,7 +11,7 @@
     </div>
     } @if (error) {
     <div class="error-banner">{{ error }}</div>
-    } @if (!isLoading && !error) {
+    } @if (!isLoading) {
     <form class="edit-form" (ngSubmit)="onSubmit()" novalidate>
       <mat-form-field appearance="outline" class="form-field full-width">
         <mat-label>Tytuł*</mat-label>
@@ -32,8 +32,10 @@
           [(ngModel)]="formData.description"
           name="description"
           rows="4"
+          maxlength="1000"
           placeholder="np. Uzupełnić szczegóły, terminy, listę zadań cząstkowych"
         ></textarea>
+        <mat-hint align="end">{{ formData.description?.length || 0 }}/1000</mat-hint>
       </mat-form-field>
 
       <div class="actions">

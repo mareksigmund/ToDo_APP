@@ -46,12 +46,17 @@
     </div>
 
     <div class="details-actions">
-      <button mat-stroked-button color="primary" (click)="goEdit()">
-        <mat-icon>edit</mat-icon>
+      <button mat-stroked-button color="primary" (click)="goEdit()" aria-label="Edytuj zadanie">
+        <mat-icon aria-hidden="true">edit</mat-icon>
         Edytuj
       </button>
 
-      <button mat-stroked-button (click)="goBack()">
+      <button
+        mat-stroked-button
+        color="priamry"
+        (click)="goBack()"
+        arail-label="Powrót do listy zadań"
+      >
         <mat-icon>arrow_back</mat-icon>
         Powrót
       </button>

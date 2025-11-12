@@ -28,8 +28,10 @@
         [(ngModel)]="formData.description"
         name="description"
         rows="3"
+        maxlength="1000"
         placeholder="np. Zebrać wymagania, przygotować slajdy, dodać podsumowanie"
       ></textarea>
+      <mat-hint align="end">{{ formData.description?.length || 0 }}/1000</mat-hint>
     </mat-form-field>
 
     <div class="actions">

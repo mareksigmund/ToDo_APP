@@ -97,7 +97,7 @@
             </div>
 
             @if (todo.description) {
-            <div class="todo-desc">
+            <div class="todo-desc" [attr.title]="todo.description || null">
               {{ todo.description }}
             </div>
             }

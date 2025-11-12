@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,6 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { TodoService } from '../../services/todo-service';
 import { Todo } from '../../models/todo.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-todo-details',
@@ -25,11 +26,12 @@ import { Todo } from '../../models/todo.model';
   templateUrl: './todo-details.html',
   styleUrls: ['./todo-details.css'],
 })
-export class TodoDetails implements OnInit {
+export class TodoDetails implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly todoService = inject(TodoService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly routeSub?: Subscription;
 
   todo: Todo | null = null;
   isLoading = false;
@@ -64,8 +66,9 @@ export class TodoDetails implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: () => {
-        this.error = 'Nie udało się pobrać danych zadania.';
+      error: (err) => {
+        this.error =
+          err?.status === 404 ? 'Nie znaleziono zadania.' : 'Nie udało się pobrać danych zadania.';
         this.isLoading = false;
         this.todo = null;
         this.cdr.markForCheck();
@@ -80,5 +83,9 @@ export class TodoDetails implements OnInit {
   goEdit(): void {
     if (!this.todo) return;
     this.router.navigate(['/todos', this.todo.id, 'edit']);
+  }
+
+  ngOnDestroy(): void {
+    this.routeSub?.unsubscribe();
   }
 }
