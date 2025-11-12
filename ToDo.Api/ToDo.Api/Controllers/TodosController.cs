@@ -19,7 +19,7 @@ namespace ToDo.Api.Controllers
 
         // GET api/todos
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken ct)
         {
             var todos = await _context.ToDoItems
                 .AsNoTracking()
@@ -31,13 +31,13 @@ namespace ToDo.Api.Controllers
                     CreatedAt = t.CreatedAt,
                     IsCompleted = t.IsCompleted
 
-                }).ToListAsync();
+                }).ToListAsync(ct);
             return Ok(todos);
         }
 
         //GET /api/todos/{id}
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
         {
             var todo = await _context.ToDoItems
                 .AsNoTracking()
@@ -49,7 +49,7 @@ namespace ToDo.Api.Controllers
                     Description = t.Description,
                     CreatedAt = t.CreatedAt,
                     IsCompleted = t.IsCompleted
-                }).FirstOrDefaultAsync();
+                }).FirstOrDefaultAsync(ct);
             if (todo == null)
             {
                 return NotFound();
@@ -60,7 +60,7 @@ namespace ToDo.Api.Controllers
 
         //POST /api/todos
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateToDoItemDto createDto)
+        public async Task<IActionResult> Create([FromBody] CreateToDoItemDto createDto, CancellationToken ct)
         {
 
             var todoItem = new ToDoItem
@@ -73,11 +73,11 @@ namespace ToDo.Api.Controllers
             try
             {
                 _context.ToDoItems.Add(todoItem);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(ct);
             }
-            catch (Exception)
+            catch (DbUpdateException)
             {
-                return StatusCode(500, "An error occurred while creating the task.");
+                return StatusCode(500, "Database write failed.");
             }
 
 
@@ -97,7 +97,7 @@ namespace ToDo.Api.Controllers
 
         //PUT /api/todos/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] EditToDoItemDto editDto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] EditToDoItemDto editDto, CancellationToken ct)
         {
             var todo = await _context.ToDoItems.FindAsync(id);
 
@@ -111,18 +111,18 @@ namespace ToDo.Api.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(ct);
             }
-            catch (Exception)
+            catch (DbUpdateException)
             {
-                return StatusCode(500, "An error occurred while updating the task.");
+                return StatusCode(500, "Database write failed.");
             }
             return NoContent();
         }
 
         // PUT /api/todos/{id}/toggle
         [HttpPut("{id}/toggle")]
-        public async Task<IActionResult> ToggleStatus(Guid id)
+        public async Task<IActionResult> ToggleStatus(Guid id, CancellationToken ct)
         {
             var todo = await _context.ToDoItems.FindAsync(id);
             if (todo == null)
@@ -132,18 +132,18 @@ namespace ToDo.Api.Controllers
             todo.IsCompleted = !todo.IsCompleted;
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(ct);
             }
-            catch (Exception)
+            catch (DbUpdateException)
             {
-                return StatusCode(500, "An error occurred while toggling the task status.");
+                return StatusCode(500, "Database write failed.");
             }
             return NoContent();
         }
 
         //DELETE /api/todos/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
         {
             var todo = await _context.ToDoItems.FindAsync(id);
             if (todo == null)
@@ -153,15 +153,13 @@ namespace ToDo.Api.Controllers
             _context.ToDoItems.Remove(todo);
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(ct);
             }
-            catch (Exception)
+            catch (DbUpdateException)
             {
-                return StatusCode(500, "An error occurred while deleting the task.");
+                return StatusCode(500, "Database write failed.");
             }
             return NoContent();
         }
-
-
     }
 }
